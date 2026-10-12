@@ -9,6 +9,16 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+      # tests/test_data_export.py reads seed data from the sibling ../koinonia-db/seed
+      - name: Check out koinonia-db (pinned SHA, polyrepo sibling)
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+        with:
+          repository: 4444J99/koinonia-db
+          ref: b5c52aeb4f437bc863d03fb9643c2d719dca5ea6
+          path: .deps/koinonia-db
+          persist-credentials: false
+      - name: Link koinonia-db as sibling
+        run: ln -s "$GITHUB_WORKSPACE/.deps/koinonia-db" "$GITHUB_WORKSPACE/../koinonia-db"
       - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: "3.11"
