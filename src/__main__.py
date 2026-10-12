@@ -21,7 +21,6 @@ from .transcription import TranscriptionPipeline
 @click.group()
 def cli() -> None:
     """Salon transcription, search, and export toolkit."""
-    pass
 
 
 @cli.command()
