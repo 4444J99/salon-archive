@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- CI: ruff and pyright made green (#13)
+
 ## [0.5.0] - 2026-02-24
 
 ### Added
@@ -61,7 +64,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial public release as part of the organvm eight-organ system
 - Core project structure and documentation
 
-[Unreleased]: https://github.com/organvm-vi-koinonia/salon-archive/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/organvm-vi-koinonia/salon-archive/compare/v0.1.1...v0.2.0
-[0.1.1]: https://github.com/organvm-vi-koinonia/salon-archive/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/organvm-vi-koinonia/salon-archive/releases/tag/v0.1.0
+[Unreleased]: https://github.com/4444J99/salon-archive/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/4444J99/salon-archive/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/4444J99/salon-archive/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/4444J99/salon-archive/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/4444J99/salon-archive/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/4444J99/salon-archive/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/4444J99/salon-archive/releases/tag/v0.1.0
