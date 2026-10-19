@@ -7,8 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- CI: pin runner images to ubuntu-24.04 (#12)
+
 ### Fixed
 - CI: ruff and pyright made green (#13)
+- CodeQL security analysis green on main (run 39189377762)
 
 ## [0.5.0] - 2026-02-24
 
