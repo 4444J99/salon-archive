@@ -136,7 +136,15 @@ class TranscriptionPipeline:
             status=TranscriptionStatus.PROCESSING,
             language=self.language,
         )
-        result.segments = self.backend.transcribe(audio_path)
+        try:
+            result.segments = self.backend.transcribe(audio_path)
+        except Exception:
+            self._results[session_id] = TranscriptionResult(
+                session_id=session_id,
+                status=TranscriptionStatus.FAILED,
+                language=self.language,
+            )
+            raise
         result.status = TranscriptionStatus.COMPLETED
         self._results[session_id] = result
         return result
