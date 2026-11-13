@@ -135,3 +135,61 @@ class TestPipelineWithBackend:
         assert backend.call_count == 1
         assert len(result.segments) == 1
         assert result.segments[0].text == "counted"
+
+    def test_pipeline_records_failed_status_on_backend_error_and_propagates(self):
+        class FailingBackend(TranscriptionBackend):
+            def transcribe(self, audio_path: str) -> list[Segment]:
+                raise RuntimeError("Synthetic backend failure")
+
+        pipeline = TranscriptionPipeline(language="fr", backend=FailingBackend())
+
+        with pytest.raises(RuntimeError, match="Synthetic backend failure") as exc_info:
+            pipeline.process_audio("S-fail", "/audio/fail.wav")
+
+        assert str(exc_info.value) == "Synthetic backend failure"
+
+        result = pipeline.get_result("S-fail")
+        assert result is not None
+        assert result.session_id == "S-fail"
+        assert result.status == TranscriptionStatus.FAILED
+        assert result.language == "fr"
+        assert result.segments == []
+        assert result.full_text == ""
+
+    def test_pipeline_replaces_failed_result_on_subsequent_success(self):
+        class FlakyBackend(TranscriptionBackend):
+            def __init__(self):
+                self.should_fail = True
+
+            def transcribe(self, audio_path: str) -> list[Segment]:
+                if self.should_fail:
+                    raise ValueError("First attempt fails")
+                return [
+                    Segment(
+                        speaker="Speaker 1",
+                        text="recovered",
+                        start_time=timedelta(seconds=0),
+                        end_time=timedelta(seconds=5),
+                    )
+                ]
+
+        backend = FlakyBackend()
+        pipeline = TranscriptionPipeline(language="en", backend=backend)
+
+        with pytest.raises(ValueError, match="First attempt fails"):
+            pipeline.process_audio("S-flaky", "/audio/flaky.wav")
+
+        failed_result = pipeline.get_result("S-flaky")
+        assert failed_result is not None
+        assert failed_result.status == TranscriptionStatus.FAILED
+        assert failed_result.segments == []
+
+        backend.should_fail = False
+        success_result = pipeline.process_audio("S-flaky", "/audio/flaky.wav")
+
+        assert success_result.status == TranscriptionStatus.COMPLETED
+        assert len(success_result.segments) == 1
+        assert success_result.segments[0].text == "recovered"
+        stored_result = pipeline.get_result("S-flaky")
+        assert stored_result is success_result
+        assert stored_result.status == TranscriptionStatus.COMPLETED
