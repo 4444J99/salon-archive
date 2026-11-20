@@ -1,0 +1,54 @@
+name: Release
+
+# First published release: v0.3.0 (salon-archive#5). Tagging `v*` builds the
+# wheel + sdist and publishes them to the GitHub Release for that tag.
+# The release-drafter workflow keeps maintaining the draft notes; this job
+# reuses them when a draft exists and falls back to generated notes.
+# Creating the tag (and removing the stale v0.0.1 draft) is a manual step.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.11"
+      - name: Install koinonia-db (same pinned reference as pyproject.toml)
+        run: pip install "koinonia-db @ git+https://github.com/organvm-vi-koinonia/koinonia-db.git@3fe455fcbdeca98ab209f38a6b892dc29217c6a1"
+      - name: Build wheel + sdist
+        run: |
+          pip install build
+          python -m build
+      - name: Collect release-drafter notes
+        id: notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/releases" \
+            --jq '[.[] | select(.draft == true)][0].body // empty' > draft-notes.md
+          if [ -s draft-notes.md ]; then
+            echo "has_notes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_notes=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish release (release-drafter notes)
+        if: steps.notes.outputs.has_notes == 'true'
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
+        with:
+          files: dist/*
+          body_path: draft-notes.md
+      - name: Publish release (generated notes)
+        if: steps.notes.outputs.has_notes != 'true'
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65  # v2
+        with:
+          files: dist/*
+          generate_release_notes: true
