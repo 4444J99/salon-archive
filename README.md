@@ -6,9 +6,45 @@
 
 > Transcripts, session metadata, topic taxonomy, and discovery infrastructure for salon-style intellectual gatherings within the organvm eight-organ system.
 
-[Purpose](#purpose) | [Participation Model](#participation-model) | [Session Formats](#session-formats) | [Archive Structure](#archive-structure) | [Metadata Schema](#metadata-schema) | [Topic Taxonomy](#topic-taxonomy) | [Transcription Pipeline](#transcription-pipeline) | [Search & Discovery](#search--discovery) | [Community Guidelines](#community-guidelines) | [Access & Invitations](#access--invitations) | [Contributing](#contributing) | [Channels & Platforms](#channels--platforms) | [Code of Conduct](#code-of-conduct) | [Inspirations & Lineage](#inspirations--lineage) | [Author & Contact](#author--contact)
+[Purpose](#purpose) | [Install & run](#install--run) | [Participation Model](#participation-model) | [Session Formats](#session-formats) | [Archive Structure](#archive-structure) | [Metadata Schema](#metadata-schema) | [Topic Taxonomy](#topic-taxonomy) | [Transcription Pipeline](#transcription-pipeline) | [Search & Discovery](#search--discovery) | [Community Guidelines](#community-guidelines) | [Access & Invitations](#access--invitations) | [Contributing](#contributing) | [Channels & Platforms](#channels--platforms) | [Code of Conduct](#code-of-conduct) | [Inspirations & Lineage](#inspirations--lineage) | [Author & Contact](#author--contact)
 
 ---
+
+## Install & run
+
+Requires Python 3.11+.
+
+```bash
+git clone https://github.com/4444J99/salon-archive.git
+cd salon-archive
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
+
+`pip install -e .` installs the `salon` and `salon-data-export` commands.
+(`koinonia-db` is not on PyPI; it is installed from its repository, pinned
+in `pyproject.toml` to the frozen head of the archived repo.)
+
+```bash
+salon --help
+salon-data-export --help
+```
+
+Smoke test — regenerates the data artifacts from the seed sessions, no
+database needed (needs the `koinonia-db` checkout as a sibling directory,
+`../koinonia-db`, as CI does):
+
+```bash
+salon-data-export
+# Written: data/sessions-index.json
+# Written: data/sample-session.md
+```
+
+The `salon` subcommands that query the archive (`search`, `export`, `stats`)
+need a database: set `DATABASE_URL` to a Postgres URL with the koinonia-db
+schema. Releases: [v0.3.0](https://github.com/4444J99/salon-archive/releases/tag/v0.3.0)
+is the first published release (wheel + sdist attached).
 
 ## Purpose
 

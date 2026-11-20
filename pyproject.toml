@@ -8,7 +8,11 @@ version = "0.3.0"
 description = "Transcription pipeline, taxonomy management, and session archival for community salons"
 requires-python = ">=3.11"
 dependencies = [
-    "koinonia-db",
+    # koinonia-db is not on PyPI: install it from its repo, pinned to the
+    # frozen head of the archived repo (the same commit CI's unpinned pip
+    # line resolves to today; the seed-data checkout in CI pins b5c52aeb,
+    # one docs-only commit behind this head).
+    "koinonia-db @ git+https://github.com/organvm-vi-koinonia/koinonia-db.git@3fe455fcbdeca98ab209f38a6b892dc29217c6a1",
     "click>=8.0",
 ]
 
@@ -18,6 +22,12 @@ dev = ["pytest>=7.0", "ruff>=0.4.0"]
 [project.scripts]
 salon = "src.__main__:cli"
 salon-data-export = "src.data_export:main"
+
+[tool.setuptools]
+# `src` is a real top-level package (src/__init__.py), not a src-layout
+# root: without this, setuptools ships src/*.py as bare top-level modules
+# and the `src.__main__` / `src.data_export` entry points cannot import.
+packages = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -13,7 +13,10 @@ metadata:
   implementation_status: PRODUCTION
   tier: standard
   promotion_status: PUBLIC_PROCESS
-  last_validated: "2026-02-24"
+  last_validated: "2026-11-20"
+  publication_url: "https://github.com/4444J99/salon-archive/releases/tag/v0.3.0"
+  entrypoint: "salon"
+  smoke_test_command: "salon-data-export"
   data_artifacts:
     - data/sessions-index.json
     - data/sample-session.md
@@ -23,7 +26,7 @@ metadata:
 agents:
   - name: ci
     trigger: on_push
-    workflow: .github/workflows/ci-python.yml
+    workflow: .github/workflows/ci.yml
     description: "Continuous integration pipeline"
 
 produces:
